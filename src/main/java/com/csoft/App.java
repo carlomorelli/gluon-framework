@@ -1,5 +1,6 @@
 package com.csoft;
 
+import com.csoft.gluon.spi.Controller;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 
@@ -7,6 +8,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 import static com.csoft.gluon.Gluon.newGluonServer;
+import static com.csoft.gluon.spi.Router.newGluonRouter;
 
 
 public class App {
@@ -14,7 +16,10 @@ public class App {
     public static void main(String... args) {
 
         newGluonServer(8080)
-            .withRouter("/test", new MyHandler())
+            .withRouter(
+                    newGluonRouter()
+                            .get("/test", new Controller(new MyHandler()))
+            )
             .start();
 
     }

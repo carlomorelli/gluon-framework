@@ -1,6 +1,8 @@
 package com.csoft;
 
 import com.csoft.gluon.Gluon;
+import com.csoft.gluon.spi.Controller;
+import com.csoft.gluon.spi.Router;
 import okhttp3.Response;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -18,7 +20,10 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 class GluonTest {
 
     private Gluon gluon = newGluonServer(8080)
-                .withRouter("/test", new App.MyHandler());
+                .withRouter(
+                        Router.newGluonRouter()
+                        .get("/test", new Controller(new App.MyHandler()))
+                );
 
     @BeforeAll
     void beforeAll() {

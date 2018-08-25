@@ -10,5 +10,8 @@ public class Controller {
         this.httpHandler = httpHandler;
     }
 
+    public HttpHandler asHttpHandler() {
+        return httpHandler;
+    }
 
 }

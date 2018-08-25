@@ -41,18 +41,33 @@ public class Router {
 
     public Map<String, Set<String>> mapOfMethods() {
         Map<String, Set<String>> map = new HashMap<>();
-        gets.forEach((k, v) -> addToSet(map, k, "GET"));
-        posts.forEach((k, v) -> addToSet(map, k, "POST"));
-        puts.forEach((k, v) -> addToSet(map, k, "PUT"));
-        deletes.forEach((k, v) -> addToSet(map, k, "DELETE"));
+        gets.forEach((k, v) -> addMethodToSet(map, k, "GET"));
+        posts.forEach((k, v) -> addMethodToSet(map, k, "POST"));
+        puts.forEach((k, v) -> addMethodToSet(map, k, "PUT"));
+        deletes.forEach((k, v) -> addMethodToSet(map, k, "DELETE"));
+        return map;
+    }
+
+    public Map<String, Set<Controller>> mapOfControllers() {
+        Map<String, Set<Controller>> map = new HashMap<>();
+        gets.forEach((k, v) -> addControllerToSet(map, k, v));
+        posts.forEach((k, v) -> addControllerToSet(map, k, v));
+        puts.forEach((k, v) -> addControllerToSet(map, k, v));
+        deletes.forEach((k, v) -> addControllerToSet(map, k, v));
         return map;
     }
 
 
 
-    private static void addToSet(Map<String, Set<String>> map, String key, String method) {
+    private static void addMethodToSet(Map<String, Set<String>> map, String key, String method) {
         Set<String> value = map.getOrDefault(key, new HashSet<>());
         value.add(method);
+        map.put(key, value);
+    }
+
+    private static void addControllerToSet(Map<String, Set<Controller>> map, String key, Controller controller) {
+        Set<Controller> value = map.getOrDefault(key, new HashSet<>());
+        value.add(controller);
         map.put(key, value);
     }
 

@@ -1,13 +1,15 @@
 package com.csoft.gluon;
 
+import com.csoft.gluon.spi.Controller;
 import com.csoft.gluon.spi.Router;
-import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.util.Map;
+import java.util.Set;
 
 public class Gluon {
 
@@ -28,6 +30,14 @@ public class Gluon {
     }
 
     public void start() {
+        Map<String, Set<Controller>> map = router.mapOfControllers();
+        map.forEach(
+                (path, setOfControllers) -> setOfControllers
+                        .iterator()
+                        .forEachRemaining(
+                                controller -> httpServer.createContext(path, controller.asHttpHandler())
+                        )
+        );
         httpServer.start();
     }
 
@@ -35,8 +45,8 @@ public class Gluon {
         httpServer.stop(0);
     }
 
-    public Gluon withRouter(String path, final HttpHandler httpHandler) {
-        httpServer.createContext(path, httpHandler);
+    public Gluon withRouter(final Router router) {
+        this.router = router;
         return this;
     }
 

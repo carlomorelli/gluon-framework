@@ -1,16 +1,17 @@
 package com.csoft.gluon.model;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
 public class Response {
 
     private int status;
-    private Map<String, String> headers;
+    private Map<String, List<String>> headers;
     private byte[] body;
 
-    public Response(final int status, final Map<String, String> headers, final byte[] body) {
+    public Response(final int status, final Map<String, List<String>> headers, final byte[] body) {
         this.status = status;
         this.headers = headers;
         this.body = body;
@@ -20,7 +21,7 @@ public class Response {
         return status;
     }
 
-    public Map<String, String> getHeaders() {
+    public Map<String, List<String>> getHeaders() {
         return headers;
     }
 

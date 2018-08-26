@@ -1,126 +1,61 @@
 package com.csoft.gluon.spi;
 
+import com.csoft.gluon.exceptions.GluonException;
 import com.csoft.gluon.model.Request;
 import com.csoft.gluon.model.Response;
-import com.sun.net.httpserver.Headers;
-import com.sun.net.httpserver.HttpContext;
 import com.sun.net.httpserver.HttpExchange;
-import com.sun.net.httpserver.HttpPrincipal;
+import org.apache.commons.io.IOUtils;
 
-import java.io.*;
-import java.net.InetSocketAddress;
-import java.net.URI;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.*;
 
-import static java.util.Collections.singletonList;
+import static java.util.stream.Collectors.*;
 
 public class ExchangeMapper {
 
-    public HttpExchange asHttpExchange(final Request request, final Response response) {
+    public Request extractRequest(HttpExchange httpExchange) {
+        try {
+            return new Request(
+                    httpExchange.getRequestMethod(),
+                    httpExchange.getRequestURI(),
+                    httpExchange.getRequestHeaders()
+                            .entrySet()
+                            .stream()
+                            .collect(toMap(Map.Entry::getKey, Map.Entry::getValue)),
+                    Collections.emptyMap(), //URLEncodedUtils.parse(httpExchange.getRequestURI(), Charset.forName("UTF-8")),
+                    IOUtils.toByteArray(httpExchange.getRequestBody())
+            );
+        } catch (IOException e) {
+            throw new GluonException("Unable to fully read input stream", e);
+        }
+    }
 
-        return new HttpExchange() {
-            @Override
-            public Headers getRequestHeaders() {
-                Headers requestHeaders = new Headers();
-                request.getHeaders().forEach(
-                        (k, v) -> requestHeaders.put(k, singletonList(v))
-                );
-                return requestHeaders;
-            }
-
-            @Override
-            public Headers getResponseHeaders() {
-                Headers responseHeaders = new Headers();
-                response.getHeaders().forEach(
-                        (k, v) -> responseHeaders.put(k, singletonList(v))
-                );
-                return responseHeaders;
-            }
-
-            @Override
-            public URI getRequestURI() {
-                return request.getRequestURI();
-            }
-
-            @Override
-            public String getRequestMethod() {
-                return request.getMethod();
-            }
-
-            @Override
-            public HttpContext getHttpContext() {
-                return null;
-            }
-
-            @Override
-            public void close() {
-
-            }
-
-            @Override
-            public InputStream getRequestBody() {
-                return new ByteArrayInputStream(request.getBody());
-            }
-
-            @Override
-            public OutputStream getResponseBody() {
-                return new ByteArrayOutputStream();
-            }
-
-            @Override
-            public void sendResponseHeaders(int rCode, long responseLength) throws IOException {
-
-            }
-
-            @Override
-            public InetSocketAddress getRemoteAddress() {
-                return null;
-            }
-
-            @Override
-            public int getResponseCode() {
-                return response.getStatus();
-            }
-
-            @Override
-            public InetSocketAddress getLocalAddress() {
-                return null;
-            }
-
-            @Override
-            public String getProtocol() {
-                return null;
-            }
-
-            @Override
-            public Object getAttribute(String name) {
-                return null;
-            }
-
-            @Override
-            public void setAttribute(String name, Object value) {
-
-            }
-
-            @Override
-            public void setStreams(InputStream i, OutputStream o) {
-
-            }
-
-            @Override
-            public HttpPrincipal getPrincipal() {
-                return null;
-            }
-        };
+    public void passResponse(HttpExchange httpExchange, final Response response) {
+        OutputStream os = httpExchange.getResponseBody();
+        try {
+            httpExchange.sendResponseHeaders(
+                    response.getStatus(),
+                    response.getBody().length
+            );
+            os.write(response.getBody());
+            os.close();
+        } catch (IOException e) {
+            throw new GluonException("Unable to fully dump output stream", e);
+        }
     }
 
 
-    public Request asRequest(final HttpExchange httpExchange) {
-
-        return null;
+    private static Map<String, List<String>> parseURLQuery(String query) {
+        return Arrays.stream(query.split("&"))
+                .map(ExchangeMapper::splitQueryParameter)
+                .collect(groupingBy(AbstractMap.SimpleImmutableEntry::getKey, LinkedHashMap::new, mapping(Map.Entry::getValue, toList())));
     }
 
-    public Response asResponse(final HttpExchange httpExchange) {
-
-        return null;
+    private static AbstractMap.SimpleImmutableEntry<String, String> splitQueryParameter(String string) {
+        final int idx = string.indexOf("=");
+        final String key = idx > 0 ? string.substring(0, idx) : string;
+        final String value = idx > 0 && string.length() > idx + 1 ? string.substring(idx + 1) : null;
+        return new AbstractMap.SimpleImmutableEntry<>(key, value);
     }
 }

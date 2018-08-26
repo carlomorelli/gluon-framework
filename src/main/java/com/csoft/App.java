@@ -1,11 +1,11 @@
 package com.csoft;
 
 import com.csoft.gluon.exceptions.GluonException;
+import com.csoft.gluon.model.Request;
+import com.csoft.gluon.model.Response;
 import com.csoft.gluon.spi.Controller;
-import com.sun.net.httpserver.HttpExchange;
 
-import java.io.IOException;
-import java.io.OutputStream;
+import java.util.Collections;
 
 import static com.csoft.gluon.Gluon.newGluonServer;
 import static com.csoft.gluon.spi.Router.newGluonRouter;
@@ -26,6 +26,7 @@ public class App {
 
     static class MyController extends Controller {
 
+/*
         @Override
         public void handle(HttpExchange t) {
             String response = "This is the response";
@@ -37,6 +38,16 @@ public class App {
             } catch (IOException e) {
                 throw new GluonException("Unable to correctly format response", e);
             }
+        }
+*/
+
+        @Override
+        public Response handle(final Request request) {
+/*            if (!request.getMethod().equalsIgnoreCase("GET")) {
+                throw new GluonException("Invalid method");
+            }*/
+            System.out.println("here handle request");
+            return new Response(200, Collections.emptyMap(), "This is the response".getBytes());
         }
     }
 

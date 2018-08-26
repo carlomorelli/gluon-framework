@@ -1,11 +1,16 @@
 package com.csoft.gluon.spi;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
 public class Router {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(Router.class);
 
     private Map<String, Controller> gets = new HashMap<>();
     private Map<String, Controller> deletes = new HashMap<>();
@@ -20,21 +25,25 @@ public class Router {
     }
 
     public Router get(final String path, final Controller controller) {
+        LOGGER.info("Registering path [{}] with [method=GET, controller={}]", path, controller.getClass().getCanonicalName());
         gets.put(path, controller);
         return this;
     }
 
     public Router post(final String path, final Controller controller) {
+        LOGGER.info("Registering path [{}] with [method=POST, controller={}]", path, controller.getClass().getCanonicalName());
         posts.put(path, controller);
         return this;
     }
 
     public Router put(final String path, final Controller controller) {
+        LOGGER.info("Registering path [{}] with [method=PUT, controller={}]", path, controller.getClass().getCanonicalName());
         puts.put(path, controller);
         return this;
     }
 
     public Router delete(final String path, final Controller controller) {
+        LOGGER.info("Registering path [{}] with [method=DELETE, controller={}]", path, controller.getClass().getCanonicalName());
         deletes.put(path, controller);
         return this;
     }

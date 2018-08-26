@@ -35,7 +35,7 @@ public class Gluon {
                 (path, setOfControllers) -> setOfControllers
                         .iterator()
                         .forEachRemaining(
-                                controller -> httpServer.createContext(path, controller.asHttpHandler())
+                                controller -> httpServer.createContext(path, controller.toHandler())
                         )
         );
         httpServer.start();
@@ -49,7 +49,6 @@ public class Gluon {
         this.router = router;
         return this;
     }
-
 
     public static Gluon newGluonServer(final int port) {
         return new Gluon(port);

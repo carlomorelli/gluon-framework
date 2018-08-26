@@ -1,8 +1,6 @@
-package com.csoft.gluon.spi;
+package com.csoft.gluon.model;
 
 import com.csoft.gluon.exceptions.GluonException;
-import com.csoft.gluon.model.Request;
-import com.csoft.gluon.model.Response;
 import com.sun.net.httpserver.HttpExchange;
 import org.apache.commons.io.IOUtils;
 

@@ -11,6 +11,8 @@ import java.io.*;
 import java.net.InetSocketAddress;
 import java.net.URI;
 
+import static java.util.Collections.singletonList;
+
 public class ExchangeMapper {
 
     public HttpExchange asHttpExchange(final Request request, final Response response) {
@@ -18,12 +20,20 @@ public class ExchangeMapper {
         return new HttpExchange() {
             @Override
             public Headers getRequestHeaders() {
-                return null;
+                Headers requestHeaders = new Headers();
+                request.getHeaders().forEach(
+                        (k, v) -> requestHeaders.put(k, singletonList(v))
+                );
+                return requestHeaders;
             }
 
             @Override
             public Headers getResponseHeaders() {
-                return null;
+                Headers responseHeaders = new Headers();
+                response.getHeaders().forEach(
+                        (k, v) -> responseHeaders.put(k, singletonList(v))
+                );
+                return responseHeaders;
             }
 
             @Override

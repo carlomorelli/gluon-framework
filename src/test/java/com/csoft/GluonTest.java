@@ -22,7 +22,7 @@ class GluonTest {
     private Gluon gluon = newGluonServer(8080)
                 .withRouter(
                         Router.newGluonRouter()
-                        .get("/test", new Controller(new App.MyHandler()))
+                        .get("/test", new App.MyController())
                 );
 
     @BeforeAll

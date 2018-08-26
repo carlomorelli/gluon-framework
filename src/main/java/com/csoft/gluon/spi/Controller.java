@@ -1,17 +1,16 @@
 package com.csoft.gluon.spi;
 
+import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 
-public class Controller {
+public abstract class Controller {
 
-    private HttpHandler httpHandler;
-
-    public Controller(final HttpHandler httpHandler) {
-        this.httpHandler = httpHandler;
+    public Controller() {
     }
 
     public HttpHandler asHttpHandler() {
-        return httpHandler;
+        return this::handle;
     }
 
+    public abstract void handle(final HttpExchange exchange);
 }

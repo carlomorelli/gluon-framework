@@ -1,8 +1,8 @@
 package com.csoft;
 
+import com.csoft.gluon.exceptions.GluonException;
 import com.csoft.gluon.spi.Controller;
 import com.sun.net.httpserver.HttpExchange;
-import com.sun.net.httpserver.HttpHandler;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -18,20 +18,25 @@ public class App {
         newGluonServer(8080)
             .withRouter(
                     newGluonRouter()
-                            .get("/test", new Controller(new MyHandler()))
+                            .get("/test", new MyController())
             )
             .start();
 
     }
 
-    static class MyHandler implements HttpHandler {
+    static class MyController extends Controller {
+
         @Override
-        public void handle(HttpExchange t) throws IOException {
+        public void handle(HttpExchange t) {
             String response = "This is the response";
-            t.sendResponseHeaders(200, response.length());
             OutputStream os = t.getResponseBody();
-            os.write(response.getBytes());
-            os.close();
+            try {
+                t.sendResponseHeaders(200, response.length());
+                os.write(response.getBytes());
+                os.close();
+            } catch (IOException e) {
+                throw new GluonException("Unable to correctly format response", e);
+            }
         }
     }
 

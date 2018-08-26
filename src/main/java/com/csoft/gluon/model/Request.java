@@ -13,6 +13,7 @@ public class Request {
     private byte[] body;
 
     public Request(final String method, final URI requestURI, final Map<String, String> headers, final byte[] body) {
+        this.method = method;
         this.requestURI = requestURI;
         this.headers = headers;
         this.body = body;

@@ -15,10 +15,10 @@ public class Request {
     private final byte[] body;
 
     public Request(final String method,
-            final URI requestURI,
-            final Map<String, List<String>> headers,
-            final Map<String, List<String>> params,
-            final byte[] body) {
+                   final URI requestURI,
+                   final Map<String, List<String>> headers,
+                   final Map<String, List<String>> params,
+                   final byte[] body) {
         this.method = method;
         this.requestURI = requestURI;
         this.headers = headers;

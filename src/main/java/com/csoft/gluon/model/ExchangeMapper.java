@@ -6,9 +6,10 @@ import org.apache.commons.io.IOUtils;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.*;
+import java.util.Collections;
+import java.util.Map;
 
-import static java.util.stream.Collectors.*;
+import static java.util.stream.Collectors.toMap;
 
 public class ExchangeMapper {
 
@@ -21,7 +22,7 @@ public class ExchangeMapper {
                             .entrySet()
                             .stream()
                             .collect(toMap(Map.Entry::getKey, Map.Entry::getValue)),
-                    Collections.emptyMap(), //URLEncodedUtils.parse(httpExchange.getRequestURI(), Charset.forName("UTF-8")),
+                    Collections.emptyMap(), //TODO use OkHttp HttpUrl::parse
                     IOUtils.toByteArray(httpExchange.getRequestBody())
             );
         } catch (IOException e) {
@@ -43,17 +44,4 @@ public class ExchangeMapper {
         }
     }
 
-
-    private static Map<String, List<String>> parseURLQuery(String query) {
-        return Arrays.stream(query.split("&"))
-                .map(ExchangeMapper::splitQueryParameter)
-                .collect(groupingBy(AbstractMap.SimpleImmutableEntry::getKey, LinkedHashMap::new, mapping(Map.Entry::getValue, toList())));
-    }
-
-    private static AbstractMap.SimpleImmutableEntry<String, String> splitQueryParameter(String string) {
-        final int idx = string.indexOf("=");
-        final String key = idx > 0 ? string.substring(0, idx) : string;
-        final String value = idx > 0 && string.length() > idx + 1 ? string.substring(idx + 1) : null;
-        return new AbstractMap.SimpleImmutableEntry<>(key, value);
-    }
 }

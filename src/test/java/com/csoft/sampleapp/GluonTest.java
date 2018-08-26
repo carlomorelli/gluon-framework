@@ -1,6 +1,7 @@
-package com.csoft;
+package com.csoft.sampleapp;
 
 import com.csoft.gluon.Gluon;
+import com.csoft.sampleapp.SampleApp;
 import com.csoft.gluon.spi.Router;
 import okhttp3.Response;
 import org.junit.jupiter.api.AfterAll;
@@ -11,7 +12,7 @@ import org.junit.jupiter.api.TestInstance;
 import java.io.IOException;
 
 import static com.csoft.gluon.Gluon.newGluonServer;
-import static com.csoft.utils.Utils.sendHttpRequest;
+import static com.csoft.gluon.utils.Utils.sendHttpRequest;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -19,10 +20,10 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 class GluonTest {
 
     private Gluon gluon = newGluonServer(8080)
-                .withRouter(
-                        Router.newGluonRouter()
-                        .get("/test", new App.MyController())
-                );
+            .withRouter(
+                    Router.newGluonRouter()
+                            .get("/test", new SampleApp.MyController())
+            );
 
     @BeforeAll
     void beforeAll() {

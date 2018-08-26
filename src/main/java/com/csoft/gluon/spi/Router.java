@@ -24,6 +24,18 @@ public class Router {
         return new Router();
     }
 
+    private static void addMethodToSet(Map<String, Set<String>> map, String key, String method) {
+        Set<String> value = map.getOrDefault(key, new HashSet<>());
+        value.add(method);
+        map.put(key, value);
+    }
+
+    private static void addControllerToSet(Map<String, Set<Controller>> map, String key, Controller controller) {
+        Set<Controller> value = map.getOrDefault(key, new HashSet<>());
+        value.add(controller);
+        map.put(key, value);
+    }
+
     public Router get(final String path, final Controller controller) {
         LOGGER.info("Registering path [{}] with [method=GET, controller={}]", path, controller.getClass().getCanonicalName());
         gets.put(path, controller);
@@ -64,20 +76,6 @@ public class Router {
         puts.forEach((k, v) -> addControllerToSet(map, k, v));
         deletes.forEach((k, v) -> addControllerToSet(map, k, v));
         return map;
-    }
-
-
-
-    private static void addMethodToSet(Map<String, Set<String>> map, String key, String method) {
-        Set<String> value = map.getOrDefault(key, new HashSet<>());
-        value.add(method);
-        map.put(key, value);
-    }
-
-    private static void addControllerToSet(Map<String, Set<Controller>> map, String key, Controller controller) {
-        Set<Controller> value = map.getOrDefault(key, new HashSet<>());
-        value.add(controller);
-        map.put(key, value);
     }
 
 }

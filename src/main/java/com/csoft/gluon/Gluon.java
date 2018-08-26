@@ -29,6 +29,10 @@ public class Gluon {
         }
     }
 
+    public static Gluon newGluonServer(final int port) {
+        return new Gluon(port);
+    }
+
     public void start() {
         Map<String, Set<Controller>> map = router.mapOfControllers();
         map.forEach(
@@ -48,9 +52,5 @@ public class Gluon {
     public Gluon withRouter(final Router router) {
         this.router = router;
         return this;
-    }
-
-    public static Gluon newGluonServer(final int port) {
-        return new Gluon(port);
     }
 }
